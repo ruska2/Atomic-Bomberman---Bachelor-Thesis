@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "772184986066",
+    "firebase_url": "https://atomicbomberman-8e29a.firebaseio.com",
+    "project_id": "atomicbomberman-8e29a",
+    "storage_bucket": "atomicbomberman-8e29a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772184986066:android:9e7e245d42347307",
+        "android_client_info": {
+          "package_name": "com.example.robo.atomicbomberman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "772184986066-rd260le2q000jaik09qra53ich29i2at.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.robo.atomicbomberman",
+            "certificate_hash": "3E4D1C3FFFE5F45836959AF6781B0A4DA9D3367A"
+          }
+        },
+        {
+          "client_id": "772184986066-jistbreas7keg323eelabped8gqr2m4c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8XQJtQyt3n3c_Zx9A8MhF-qQD4bobpfA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "772184986066-jistbreas7keg323eelabped8gqr2m4c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
