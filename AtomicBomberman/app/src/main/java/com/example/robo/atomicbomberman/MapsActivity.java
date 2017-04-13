@@ -119,7 +119,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         //GET ALL BOMBS
-        
+
         dbref.child(constants.ACTIVE_BOMB_TABLE).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -263,42 +263,59 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+
                             int id = 0;
                             if (dataSnapshot.getValue() != null) {
-                                ArrayList<Object> bombs = new ArrayList<Object>();
-                                try {
-                                    bombs = (ArrayList<Object>) dataSnapshot.getValue();
-                                } catch (Exception e) {
-                                    bombs.add(dataSnapshot.getValue());
-                                }
-
-                                for (Object bomb : bombs) {
-                                    if (bomb == null) {
-                                        continue;
-                                    }
-
-
-                                    Map<String, Object> objectMap = (HashMap<String, Object>)
-                                            bomb;
-
-                                    if(bombs.size() == 1){
-                                        for(String key : objectMap.keySet()){
-                                            objectMap = (HashMap<String, Object>) objectMap.get(key);
+                                Map<String, Object> objectMap;
+                                if (dataSnapshot.getValue() instanceof Map) {
+                                    objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+                                } else {
+                                    ArrayList<Object> x = (ArrayList<Object>) dataSnapshot.getValue();
+                                    objectMap = new HashMap<String, Object>();
+                                    for (Object k : x) {
+                                        if (k != null) {
+                                            HashMap<String, Object> o = (HashMap<String, Object>) k;
+                                            objectMap.put(o.get("ID").toString(), o);
                                         }
                                     }
 
-
-                                    String idstr = objectMap.get("ID").toString();
-                                    int idint = Integer.parseInt(idstr);
-                                    if (idint > id) {
-                                        id = idint;
-                                    }
                                 }
 
+                                for (Object obj : objectMap.values()) {
+                                    if (obj instanceof Map) {
+                                        Map<String, Object> values = (Map<String, Object>) obj;
+
+
+                                        String idstr = values.get("ID").toString();
+                                        int idint = Integer.parseInt(idstr);
+                                        if (idint > id) {
+                                            id = idint;
+                                        }
+                                    }
+                                }
                                 id += 1;
+
+                                Bomb bomb = new Bomb( Calendar.getInstance().getTimeInMillis(), name, 60, lati, longi);
+                                bomb.setId(id);
+                                db.insert_bomb(bomb);
+
+
+                                Intent myservice = new Intent(MapsActivity.this, BombHandler.class);
+                                myservice.putExtra("BOMB",bomb);
+                                startService(myservice);
+                            }else{
+
+
+
+                                Bomb bomb = new Bomb( Calendar.getInstance().getTimeInMillis(), name, 60, lati, longi);
+                                bomb.setId(0);
+                                db.insert_bomb(bomb);
+
+                                Intent myservice = new Intent(MapsActivity.this, BombHandler.class);
+                                myservice.putExtra("BOMB",bomb);
+                                startService(myservice);
                             }
 
-                            db.insert_bomb(Integer.toString(id), Calendar.getInstance().getTimeInMillis(), name, 60, lati, longi);
                         }
 
                         @Override

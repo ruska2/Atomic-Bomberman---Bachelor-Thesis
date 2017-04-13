@@ -1,10 +1,11 @@
 package com.example.robo.atomicbomberman;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class Bomb {
+public class Bomb implements Serializable {
     int id;
     long datetime;
     String who;

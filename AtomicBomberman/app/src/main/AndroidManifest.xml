@@ -53,7 +53,12 @@
         <activity
             android:name=".RegistrationActivity"
             android:label="@string/title_activity_registration"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
+        <service
+            android:name=".BombHandler"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
