@@ -64,12 +64,12 @@ public class Bomb implements Serializable {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
 
-        result.put(Constants.getInstance().ACTIVE_BOMB_TABLE_ID,id);
-        result.put(Constants.getInstance().ACTIVE_BOMB_TABLE_DATETIME, datetime);
-        result.put(Constants.getInstance().ACTIVE_BOMB_TABLE_WHO, who);
-        result.put(Constants.getInstance().ACTIVE_BOMB_TABLE_REMAINING_TIME, remaining_time);
-        result.put(Constants.getInstance().ACTIVE_BOMB_TABLE_LATI, lati);
-        result.put(Constants.getInstance().ACTIVE_BOMB_TABLE_LONGI, longi);
+        result.put(Constants.ACTIVE_BOMB_TABLE_ID,id);
+        result.put(Constants.ACTIVE_BOMB_TABLE_DATETIME, datetime);
+        result.put(Constants.ACTIVE_BOMB_TABLE_WHO, who);
+        result.put(Constants.ACTIVE_BOMB_TABLE_REMAINING_TIME, remaining_time);
+        result.put(Constants.ACTIVE_BOMB_TABLE_LATI, lati);
+        result.put(Constants.ACTIVE_BOMB_TABLE_LONGI, longi);
 
 
 

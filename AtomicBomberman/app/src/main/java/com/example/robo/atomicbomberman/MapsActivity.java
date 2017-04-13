@@ -51,7 +51,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     String name = "";
     boolean inserted = false;
     Database db = Database.getInstance();
-    Constants constants = Constants.getInstance();
     User user;
     boolean paused = false;
     ArrayList<Marker> markers = new ArrayList<>();
@@ -73,7 +72,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Bundle bundle = getIntent().getExtras();
 
-        name = bundle.getString(constants.INTENT_NAME);
+        name = bundle.getString(Constants.INTENT_NAME);
 
         setSupportActionBar(myToolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -84,7 +83,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         //GET _ ALL ACTIVE_USERS
 
         final DatabaseReference dbref = Database.getInstance().mDatabase;
-        dbref.child(constants.ACTIVE_USERS_TABLE).addValueEventListener(new ValueEventListener() {
+        dbref.child(Constants.ACTIVE_USERS_TABLE).addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -102,8 +101,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                             IconGenerator iconFactory = new IconGenerator(getApplicationContext());
-                            Marker me = mMap.addMarker(new MarkerOptions().position(new LatLng((double) values.get(constants.ACTIVE_USERS_TABLE_LATI), (double) values.get(constants.ACTIVE_USERS_TABLE_LONGI))).title(values.get(constants.ACTIVE_USERS_TABLE_NICKNAME).toString()).visible(true));
-                            me.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon((String) values.get(constants.ACTIVE_USERS_TABLE_NICKNAME))));
+                            Marker me = mMap.addMarker(new MarkerOptions().position(new LatLng((double) values.get(Constants.ACTIVE_USERS_TABLE_LATI), (double) values.get(Constants.ACTIVE_USERS_TABLE_LONGI))).title(values.get(Constants.ACTIVE_USERS_TABLE_NICKNAME).toString()).visible(true));
+                            me.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon((String) values.get(Constants.ACTIVE_USERS_TABLE_NICKNAME))));
                             markers.add(me);
 
                         }
@@ -120,7 +119,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //GET ALL BOMBS
 
-        dbref.child(constants.ACTIVE_BOMB_TABLE).addValueEventListener(new ValueEventListener() {
+        dbref.child(Constants.ACTIVE_BOMB_TABLE).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (Marker me : bomb_markers) {
@@ -202,7 +201,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
-                    Toast.makeText(getApplicationContext(), constants.FOUNDED_GPS, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), Constants.FOUNDED_GPS, Toast.LENGTH_SHORT).show();
 
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
@@ -257,7 +256,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     bomb_markers.add(me);
 
-                    Query query = db.mDatabase.child(constants.ACTIVE_BOMB_TABLE);
+                    Query query = db.mDatabase.child(Constants.ACTIVE_BOMB_TABLE);
 
 
                     query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -356,7 +355,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 super.onStop();
                 db.delete_user(name);
 
-                LoginActivity.putPref(constants.PREFERENCE_NAME, "", this);
+                LoginActivity.putPref(Constants.PREFERENCE_NAME, "", this);
 
                 Intent myintent = new Intent(MapsActivity.this, LoginActivity.class);
                 startActivity(myintent);

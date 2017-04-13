@@ -25,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     Database db = Database.getInstance();
-    Constants constants = Constants.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +32,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
-        if(getPref(constants.PREFERENCE_NAME,getApplicationContext()) != null && !getPref(constants.PREFERENCE_NAME,getApplicationContext()).equals(""))
+        if(getPref(Constants.PREFERENCE_NAME,getApplicationContext()) != null && !getPref(Constants.PREFERENCE_NAME,getApplicationContext()).equals(""))
         {
-            String name = getPref(constants.PREFERENCE_NAME,this);
+            String name = getPref(Constants.PREFERENCE_NAME,this);
 
             Intent myintent = new Intent(LoginActivity.this, MapsActivity.class);
-            myintent.putExtra(constants.INTENT_NAME, name);
+            myintent.putExtra(Constants.INTENT_NAME, name);
 
             startActivity(myintent);
 
@@ -75,9 +74,9 @@ public class LoginActivity extends AppCompatActivity {
                         progressDialog.show();
 
 
-                        Query query = db.mDatabase.child(constants.REGISTRED_USERS_TABLE).orderByChild(constants.REGISTRED_USERS_TABLE_NICNAKME).equalTo(namestr);
+                        Query query = db.mDatabase.child(Constants.REGISTRED_USERS_TABLE).orderByChild(Constants.REGISTRED_USERS_TABLE_NICNAKME).equalTo(namestr);
                         if(RegistrationActivity.validate_email(namestr)){
-                            query = db.mDatabase.child(constants.REGISTRED_USERS_TABLE).orderByChild(constants.REGISTRED_USERS_TABLE_MAIL).equalTo(namestr);
+                            query = db.mDatabase.child(Constants.REGISTRED_USERS_TABLE).orderByChild(Constants.REGISTRED_USERS_TABLE_MAIL).equalTo(namestr);
                         }
                         query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -102,11 +101,11 @@ public class LoginActivity extends AppCompatActivity {
                                         }
                                     }
 
-                                    if(values.get(constants.REGISTRED_USER_TABLE_PASSWORD).equals(pw))
+                                    if(values.get(Constants.REGISTRED_USER_TABLE_PASSWORD).equals(pw))
                                     {
                                         Intent myintent = new Intent(LoginActivity.this, MapsActivity.class);
-                                        myintent.putExtra(constants.INTENT_NAME, values.get(constants.REGISTRED_USERS_TABLE_NICNAKME).toString());
-                                        putPref(constants.PREFERENCE_NAME, namestr, getApplicationContext());
+                                        myintent.putExtra(Constants.INTENT_NAME, values.get(Constants.REGISTRED_USERS_TABLE_NICNAKME).toString());
+                                        putPref(Constants.PREFERENCE_NAME, namestr, getApplicationContext());
                                         startActivity(myintent);
 
                                         finish();
@@ -114,11 +113,11 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                     else{
 
-                                        Toast.makeText(getApplicationContext(), constants.WRONG_PASSWORD, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), Constants.WRONG_PASSWORD, Toast.LENGTH_SHORT).show();
                                     }
 
                                 }else{
-                                    Toast.makeText(getApplicationContext(),constants.USERNAME_NOT_EXIST, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(),Constants.USERNAME_NOT_EXIST, Toast.LENGTH_SHORT).show();
                                 }
 
                                 progressDialog.dismiss();
@@ -132,7 +131,7 @@ public class LoginActivity extends AppCompatActivity {
                         });
 
                     } else {
-                        Toast.makeText(getApplicationContext(), constants.SET_NICKNAME, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), Constants.SET_NICKNAME, Toast.LENGTH_SHORT).show();
                     }
 
 

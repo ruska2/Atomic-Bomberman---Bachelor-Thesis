@@ -6,7 +6,6 @@ package com.example.robo.atomicbomberman;
 
 public class Constants {
 
-    private static Constants instance = null;
     //ACTIVE_USER
     public static final String ACTIVE_USERS_TABLE = "ACTIVE_USERS";
     public static final String ACTIVE_USERS_TABLE_NICKNAME = "NICKNAME";
@@ -49,10 +48,4 @@ public class Constants {
 
     }
 
-    public static Constants getInstance(){
-        if(instance == null){
-            instance = new Constants();
-        }
-        return instance;
-    }
 }

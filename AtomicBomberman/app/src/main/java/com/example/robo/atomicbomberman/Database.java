@@ -19,7 +19,6 @@ public class Database {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
     private static Database instance = null;
-    Constants constants = Constants.getInstance();
 
 
     private Database(){
@@ -39,7 +38,7 @@ public class Database {
     public void insert_registred_user(String nickname, String password, String email){
 
         RegistredUser ruser = new RegistredUser(nickname,password,email);
-        mDatabase.child(constants.REGISTRED_USERS_TABLE).child(nickname).setValue(ruser.toMap());
+        mDatabase.child(Constants.REGISTRED_USERS_TABLE).child(nickname).setValue(ruser.toMap());
 
     }
 
@@ -48,7 +47,7 @@ public class Database {
 
     public void insert_user(String name, double lati, double longi) {
         User user = new User(name, lati, longi);
-        mDatabase.child(constants.ACTIVE_USERS_TABLE).child(name).setValue(user.toMap());
+        mDatabase.child(Constants.ACTIVE_USERS_TABLE).child(name).setValue(user.toMap());
     }
 
 
@@ -56,7 +55,7 @@ public class Database {
     public void update_active_user(final User user, double lati, double longi) {
         user.setLati(lati);
         user.setLongi(longi);
-        Query query = mDatabase.child(constants.ACTIVE_USERS_TABLE).orderByChild(constants.ACTIVE_USERS_TABLE_NICKNAME).equalTo(user.getName());
+        Query query = mDatabase.child(Constants.ACTIVE_USERS_TABLE).orderByChild(Constants.ACTIVE_USERS_TABLE_NICKNAME).equalTo(user.getName());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -80,7 +79,7 @@ public class Database {
 
     // mazanie neaktivneho uzivatela
     public void delete_user(String nickname) {
-        Query query = mDatabase.child(constants.ACTIVE_USERS_TABLE).orderByChild(constants.ACTIVE_USERS_TABLE_NICKNAME).equalTo(nickname);
+        Query query = mDatabase.child(Constants.ACTIVE_USERS_TABLE).orderByChild(Constants.ACTIVE_USERS_TABLE_NICKNAME).equalTo(nickname);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -105,13 +104,13 @@ public class Database {
 
         Bomb bomb = new Bomb(datetime,who,remaining_time,lati,longi);
         bomb.setId(Integer.parseInt(id));
-        mDatabase.child(constants.ACTIVE_BOMB_TABLE).child(id).setValue(bomb.toMap());
+        mDatabase.child(Constants.ACTIVE_BOMB_TABLE).child(id).setValue(bomb.toMap());
 
     }
 
     public void insert_bomb(Bomb bomb ){
 
-        mDatabase.child(constants.ACTIVE_BOMB_TABLE).child(String.valueOf(bomb.id)).setValue(bomb.toMap());
+        mDatabase.child(Constants.ACTIVE_BOMB_TABLE).child(String.valueOf(bomb.id)).setValue(bomb.toMap());
 
     }
 
@@ -119,7 +118,7 @@ public class Database {
 
     public void update_active_bomb(final Bomb bomb) {
 
-        Query query = mDatabase.child(constants.ACTIVE_BOMB_TABLE).orderByChild(constants.ACTIVE_BOMB_TABLE_ID).equalTo(bomb.id);
+        Query query = mDatabase.child(Constants.ACTIVE_BOMB_TABLE).orderByChild(Constants.ACTIVE_BOMB_TABLE_ID).equalTo(bomb.id);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -141,7 +140,7 @@ public class Database {
     }
 
     public void delete_bomb(final Bomb bomb) {
-        Query query = mDatabase.child(constants.ACTIVE_BOMB_TABLE).orderByChild(constants.ACTIVE_BOMB_TABLE_ID).equalTo(bomb.id);
+        Query query = mDatabase.child(Constants.ACTIVE_BOMB_TABLE).orderByChild(Constants.ACTIVE_BOMB_TABLE_ID).equalTo(bomb.id);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

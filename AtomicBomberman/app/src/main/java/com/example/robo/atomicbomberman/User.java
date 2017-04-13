@@ -50,9 +50,9 @@ public class User {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
 
-        result.put(Constants.getInstance().ACTIVE_USERS_TABLE_NICKNAME, nickname);
-        result.put(Constants.getInstance().ACTIVE_USERS_TABLE_LATI, lati);
-        result.put(Constants.getInstance().ACTIVE_USERS_TABLE_LONGI, longi);
+        result.put(Constants.ACTIVE_USERS_TABLE_NICKNAME, nickname);
+        result.put(Constants.ACTIVE_USERS_TABLE_LATI, lati);
+        result.put(Constants.ACTIVE_USERS_TABLE_LONGI, longi);
 
 
         return result;

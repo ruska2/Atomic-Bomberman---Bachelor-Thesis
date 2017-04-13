@@ -3,7 +3,6 @@ package com.example.robo.atomicbomberman;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -13,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 public class BombHandler extends Service {
 
     ArrayList<Bomb> bombs = new ArrayList<>();
-    Constants constants = Constants.getInstance();
     Database db = Database.getInstance();
     int counter = 0;
 
@@ -23,7 +21,6 @@ public class BombHandler extends Service {
 
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run() {
-                Log.d("name",bombs.toString());
                 counter++;
                 update_bombs();
             }

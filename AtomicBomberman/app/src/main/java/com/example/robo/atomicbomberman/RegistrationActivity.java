@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 public class RegistrationActivity extends AppCompatActivity {
 
     Database db = Database.getInstance();
-    Constants constants = Constants.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,27 +67,27 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
                 if(name.equals("") || name.length() < 4 ){
-                    Toast.makeText(RegistrationActivity.this,constants.SET_NICKNAME, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this,Constants.SET_NICKNAME, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if(!validate_name(name) ){
-                    Toast.makeText(RegistrationActivity.this,constants.WRONG_NAME, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this,Constants.WRONG_NAME, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if(!validate_email(mail)){
-                    Toast.makeText(RegistrationActivity.this, constants.NOT_VALID_EMAIL, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this, Constants.NOT_VALID_EMAIL, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if(pw.equals("") || pw.length() < 4){
-                    Toast.makeText(RegistrationActivity.this,constants.SHORT_PASSWORD, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegistrationActivity.this,Constants.SHORT_PASSWORD, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
 
-                Query query = db.mDatabase.child(constants.REGISTRED_USERS_TABLE);
+                Query query = db.mDatabase.child(Constants.REGISTRED_USERS_TABLE);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -115,15 +114,15 @@ public class RegistrationActivity extends AppCompatActivity {
                                 if (obj instanceof Map) {
                                     values = (Map<String, Object>) obj;
 
-                                    if(values.get(constants.REGISTRED_USERS_TABLE_MAIL).equals(mail)){
-                                        Toast.makeText(RegistrationActivity.this, constants.EMAIL_EXISTS, Toast.LENGTH_SHORT).show();
+                                    if(values.get(Constants.REGISTRED_USERS_TABLE_MAIL).equals(mail)){
+                                        Toast.makeText(RegistrationActivity.this, Constants.EMAIL_EXISTS, Toast.LENGTH_SHORT).show();
                                         insert = false;
                                         break;
                                     }
 
-                                    if(values.get(constants.REGISTRED_USERS_TABLE_NICNAKME).equals(name)){
+                                    if(values.get(Constants.REGISTRED_USERS_TABLE_NICNAKME).equals(name)){
                                         insert = false;
-                                        Toast.makeText(RegistrationActivity.this, constants.NICKNAME_EXISTS, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(RegistrationActivity.this, Constants.NICKNAME_EXISTS, Toast.LENGTH_SHORT).show();
                                         break;
                                     }
                                 }

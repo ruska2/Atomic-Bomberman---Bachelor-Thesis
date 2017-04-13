@@ -53,10 +53,10 @@ public class RegistredUser {
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
 
-        result.put(Constants.getInstance().REGISTRED_USERS_TABLE_NICNAKME, nickname);
-        result.put(Constants.getInstance().REGISTRED_USER_TABLE_PASSWORD, password);
-        result.put(Constants.getInstance().REGISTRED_USERS_TABLE_MAIL, email);
-        result.put(Constants.getInstance().REGISTRED_USERS_TABLE_SCORE,score);
+        result.put(Constants.REGISTRED_USERS_TABLE_NICNAKME, nickname);
+        result.put(Constants.REGISTRED_USER_TABLE_PASSWORD, password);
+        result.put(Constants.REGISTRED_USERS_TABLE_MAIL, email);
+        result.put(Constants.REGISTRED_USERS_TABLE_SCORE,score);
 
 
 
