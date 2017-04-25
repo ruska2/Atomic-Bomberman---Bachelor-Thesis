@@ -45,16 +45,17 @@ public class Database {
 
     //insert aktivneho uzivatela
 
-    public void insert_user(String name, double lati, double longi) {
-        User user = new User(name, lati, longi);
+    public void insert_user(String name, double lati, double longi,long time) {
+        User user = new User(name, lati, longi,time);
         mDatabase.child(Constants.ACTIVE_USERS_TABLE).child(name).setValue(user.toMap());
     }
 
 
     // update usera
-    public void update_active_user(final User user, double lati, double longi) {
+    public void update_active_user(final User user, double lati, double longi,long datetime) {
         user.setLati(lati);
         user.setLongi(longi);
+        user.setDatetime(datetime);
         Query query = mDatabase.child(Constants.ACTIVE_USERS_TABLE).orderByChild(Constants.ACTIVE_USERS_TABLE_NICKNAME).equalTo(user.getName());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -160,6 +161,33 @@ public class Database {
         });
 
     }
+
+
+    public void update_registred_user(final RegistredUser registredUser) {
+
+        Query query = mDatabase.child(Constants.REGISTRED_USERS_TABLE).orderByChild(Constants.REGISTRED_USERS_TABLE_NICNAKME).equalTo(registredUser.getName());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null){
+                    DataSnapshot nodeDataSnapshot = dataSnapshot.getChildren().iterator().next();
+                    String key = nodeDataSnapshot.getKey(); //
+                    String path = "/" + dataSnapshot.getKey() + "/" + key;
+                    Map<String, Object> result;
+                    result = registredUser.toMap();
+                    mDatabase.child(path).updateChildren(result);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+
 
 
 }

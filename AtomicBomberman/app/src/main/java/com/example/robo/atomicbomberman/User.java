@@ -11,11 +11,13 @@ public class User {
     static String nickname;
     double lati;
     double longi;
+    long datetime;
 
-    public User(String name, double lati, double longi){
+    public User(String name, double lati, double longi,long datetime){
         this.nickname = name;
         this.lati = lati;
         this.longi = longi;
+        this.datetime = datetime;
     }
 
     public  User(){};
@@ -35,6 +37,8 @@ public class User {
         return  longi;
     }
 
+    public long getDatetime(){return datetime;}
+
     public void setName(String name){
         this.nickname = name;
     }
@@ -47,12 +51,15 @@ public class User {
         this.longi = longi;
     }
 
+    public void setDatetime(long datetime) {this.datetime = datetime;}
+
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
 
         result.put(Constants.ACTIVE_USERS_TABLE_NICKNAME, nickname);
         result.put(Constants.ACTIVE_USERS_TABLE_LATI, lati);
         result.put(Constants.ACTIVE_USERS_TABLE_LONGI, longi);
+        result.put(Constants.ACTIVE_USERS_TABLE_DATETIME,datetime);
 
 
         return result;

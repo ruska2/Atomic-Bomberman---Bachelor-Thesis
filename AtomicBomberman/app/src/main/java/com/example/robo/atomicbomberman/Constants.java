@@ -11,6 +11,7 @@ public class Constants {
     public static final String ACTIVE_USERS_TABLE_NICKNAME = "NICKNAME";
     public static final String ACTIVE_USERS_TABLE_LONGI = "LONGITUDE";
     public static final String ACTIVE_USERS_TABLE_LATI = "LATITUDE";
+    public static final String ACTIVE_USERS_TABLE_DATETIME = "DATETIME";
 
     //TOASTS
     public static final String WRONG_PASSWORD = "Wrong Password!";
@@ -32,6 +33,11 @@ public class Constants {
 
     public static final String PREFERENCE_NAME = "User";
     public static final String INTENT_NAME = "name";
+    public static final String PUT_BOMB_INTENT = "PUT_BOMB_INTENT";
+    public static final String WAITING_TIME = "WAITING_TIME";
+
+    public static final String PUT_BOMB_TEXT = "PUT BOMB!";
+    public static final String PUT_BOMB_AVAILABLE = "PUT BOMB AVAILABLE on ";
 
 
     //ACTIVE_BOMBS
@@ -43,6 +49,16 @@ public class Constants {
     public static final String ACTIVE_BOMB_TABLE_LONGI = "LONGITUDE";
     public static final String ACTIVE_BOMB_TABLE_LATI = "LATITUDE";
     public static final String ACTIVE_BOMB_TABLE_ID = "ID";
+
+    //TIME_IN_MILIS
+    public static final long TEN_SECONDS_IN_MILIS = 10000;
+    public static final long FIVE_SECONDS_IN_MILIS = 5000;
+
+    //ALERT_TOOLBAR STRINGS
+
+    public static final String YOU_ARE_IN_SAFE = "YOU ARE IN SAFE";
+    public static final String YOU_ARE_IN_DANGER = "YOU ARE IN DANGER , MOVE AWAY !!!";
+    public static final String SCORE = "SCORE : ";
 
     private Constants(){
 
