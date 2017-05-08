@@ -41,10 +41,6 @@ public class DangerChecker extends Thread {
 
         final DatabaseReference dbref = Database.getInstance().mDatabase;
 
-        //hitcontrol
-
-
-
         dbref.child(Constants.ACTIVE_BOMB_TABLE).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -55,11 +51,11 @@ public class DangerChecker extends Thread {
                         objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
                     }else{
                         ArrayList<Object> x = (ArrayList<Object>) dataSnapshot.getValue();
-                        objectMap = new HashMap<String, Object>();
+                        objectMap = new HashMap<>();
                         for (Object k : x){
                             if(k != null){
                                 HashMap<String,Object> o = (HashMap<String, Object>) k;
-                                objectMap.put(o.get("ID").toString(),o);
+                                objectMap.put(o.get(Constants.ACTIVE_BOMB_TABLE_ID).toString(),o);
                             }
                         }
 
@@ -78,44 +74,30 @@ public class DangerChecker extends Thread {
                             float[] results = new float[1];
                             Location.distanceBetween(cords[0], cords[1], lat, lom, results);
 
-                          //  Log.d("bomb",lat + ","+ lom);
-                           // Log.d("user",cords[0] + ","+ cords[1]);
-
-
-
                             float distanceInMeters = results[0];
 
                             if(distanceInMeters < 80.01){
-                                //TODO SEND notific
                                 Message message = mHandler.obtainMessage();
 
-                                message.obj = "YOU ARE IN DANGER MOVE AWAY!!!";
+                                message.obj = Constants.YOU_ARE_IN_DANGER;
                                 mHandler.sendMessage(message);
                                 break;
 
                             }else{
                                 Message message = mHandler.obtainMessage();
 
-                                message.obj = "YOU ARE IN SAFE";
+                                message.obj = Constants.YOU_ARE_IN_SAFE;
                                 mHandler.sendMessage(message);
                             }
 
-
-
                         }
                     }
-
-
-
-
-                    //Log.d("hod",cords[0]+ ","+cords[1]+ ","+ name);
-
 
                 }
                 else{
                     Message message = mHandler.obtainMessage();
 
-                    message.obj = "YOU ARE IN SAFE";
+                    message.obj = Constants.YOU_ARE_IN_SAFE;
                     mHandler.sendMessage(message);
                 }
             }
@@ -131,7 +113,7 @@ public class DangerChecker extends Thread {
 
     private void getLatLong(){
 
-        Query query = db.mDatabase.child(Constants.ACTIVE_USERS_TABLE).orderByChild(Constants.REGISTRED_USERS_TABLE_NICNAKME).equalTo(name);
+        Query query = db.mDatabase.child(Constants.ACTIVE_USERS_TABLE).orderByChild(Constants.ACTIVE_USERS_TABLE_NICKNAME).equalTo(name);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -4,6 +4,7 @@ import android.animation.IntEvaluator;
 import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -18,9 +19,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.telephony.TelephonyManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -73,9 +75,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     LocationListener list;
     public static DangerChecker dangerChecker;
     static long currentTime = 0;
-    DataCleaner dataCleaner;
     Handler mHandler;
-    boolean danger = false;
 
 
 
@@ -102,8 +102,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         new RetrieveFeedTask().execute();
 
-        dataCleaner = new DataCleaner();
-        dataCleaner.start();
 
         //message hander
 
@@ -120,7 +118,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 not.setText(mes);
 
                 not.setTextColor(Color.RED);
-                if(mes.equals("YOU ARE IN SAFE")){
+                if(mes.equals(Constants.YOU_ARE_IN_SAFE)){
                     not.setTextColor(Color.GREEN);
                 }
 
@@ -146,18 +144,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             TextView scoretv = (TextView) findViewById(R.id.score_text);
                             int newn = (int) (long)  values.get(Constants.REGISTRED_USERS_TABLE_SCORE);
-                            //"SCORE:
                             int oldn = 0;
                             if(!scoretv.getText().toString().equals("")) {
                                 oldn = Integer.parseInt(scoretv.getText().toString().substring(8));
                             }
                             startCountAnimation(scoretv,oldn,newn);
-
-                            //scoretv.setText(Constants.SCORE + score);
-
-
-
-
                         }
                     }
                 }
@@ -168,10 +159,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         });
-
-
-
-
 
         //GET _ ALL ACTIVE_USERS
 
@@ -193,9 +180,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (Object obj : objectMap.values()) {
                         if (obj instanceof Map) {
                             Map<String, Object> values = (Map<String, Object>) obj;
-
-                            long oldtime = (long) values.get(Constants.ACTIVE_USERS_TABLE_DATETIME);
-
 
                             IconGenerator iconFactory = new IconGenerator(getApplicationContext());
                             Marker me = mMap.addMarker(new MarkerOptions().position(new LatLng((double) values.get(Constants.ACTIVE_USERS_TABLE_LATI), (double) values.get(Constants.ACTIVE_USERS_TABLE_LONGI))).title(values.get(Constants.ACTIVE_USERS_TABLE_NICKNAME).toString()).visible(true));
@@ -238,7 +222,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 if (dataSnapshot.getValue() != null) {
 
-                    //Log.d("error",dataSnapshot.getValue().toString());
                     Map<String, Object> objectMap;
                     if(dataSnapshot.getValue() instanceof Map){
                         objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
@@ -248,7 +231,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         for (Object k : x){
                             if(k != null){
                                 HashMap<String,Object> o = (HashMap<String, Object>) k;
-                                objectMap.put(o.get("ID").toString(),o);
+                                objectMap.put(o.get(Constants.ACTIVE_BOMB_TABLE_ID).toString(),o);
                             }
                         }
 
@@ -259,11 +242,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (obj instanceof Map) {
                             Map<String, Object> values = (Map<String, Object>) obj;
 
-                            double lati = (double) values.get("LATITUDE");
-                            double longi = (double) values.get("LONGITUDE");
+                            double lati = (double) values.get(Constants.ACTIVE_USERS_TABLE_LATI);
+                            double longi = (double) values.get(Constants.ACTIVE_BOMB_TABLE_LONGI);
 
 
-                            String idstr = values.get("REMAINING_TIME").toString();
+                            String idstr = values.get(Constants.ACTIVE_BOMB_TABLE_REMAINING_TIME).toString();
 
                             Circle circle = mMap.addCircle(new CircleOptions()
                                     .center(new LatLng(lati, longi))
@@ -290,7 +273,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             bomb_markers.add(me);
 
-                            //vizualize bomb tick
 
                         }
                     }
@@ -306,9 +288,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
 
-        //get score update
-
-
         manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         list = new LocationListener() {
@@ -319,11 +298,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (user == null || !user.getName().equals(name)) {
 
                     new RetrieveFeedTask().execute();//getactualtime
-                    Database.getInstance().insert_user(name, location.getLatitude(), location.getLongitude(), currentTime);
+
                     lati = location.getLatitude();
                     longi = location.getLongitude();
                     inserted = true;
                     user = new User(name, location.getLatitude(), location.getLongitude(),currentTime);
+                    new UserSenderClient(user).execute();
 
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
@@ -337,12 +317,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                 } else {
-                    if (!paused) {
+
                         lati = location.getLatitude();
                         longi = location.getLongitude();
-                        new RetrieveFeedTask().execute();//getactualtime
-                        Database.getInstance().update_active_user(user, location.getLatitude(), location.getLongitude(),currentTime);
-                    }
+                        new RetrieveFeedTask().execute();
+                        user.setLongi(longi);
+                        user.setLati(lati);
+                        user.setDatetime(currentTime);
+                        new UserSenderClient(user).execute();
+
                 }
             }
 
@@ -365,11 +348,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         final Button putbomb = (Button) findViewById(R.id.button2);
         putbomb.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
 
-
                 if (lati != 0) {
+                    putbomb.setClickable(false);
+                    putbomb.setEnabled(false);
+                    new Thread(new ButtonDecrement(putbomb)).start();
+
                     Circle circle = mMap.addCircle(new CircleOptions()
                             .center(new LatLng(lati, longi))
                             .radius(1)
@@ -383,9 +370,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             .strokeColor(Color.RED));
 
                     bomb_circles_animations.add(circle2);
-
-
-
 
 
                     IconGenerator iconFactory = new IconGenerator(getApplicationContext());
@@ -412,7 +396,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     for (Object k : x) {
                                         if (k != null) {
                                             HashMap<String, Object> o = (HashMap<String, Object>) k;
-                                            objectMap.put(o.get("ID").toString(), o);
+                                            objectMap.put(o.get(Constants.ACTIVE_BOMB_TABLE_ID).toString(), o);
                                         }
                                     }
 
@@ -423,7 +407,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                         Map<String, Object> values = (Map<String, Object>) obj;
 
 
-                                        String idstr = values.get("ID").toString();
+                                        String idstr = values.get(Constants.ACTIVE_BOMB_TABLE_ID).toString();
                                         int idint = Integer.parseInt(idstr);
                                         if (idint > id) {
                                             id = idint;
@@ -432,32 +416,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                                 id += 1;
 
-                                new RetrieveFeedTask().execute();//getactualtime
+                                new RetrieveFeedTask().execute();
 
                                 Bomb bomb = new Bomb( currentTime, name, 60, lati, longi);
                                 bomb.setId(id);
-                                db.insert_bomb(bomb);
+                                new BombSenderClient(bomb).execute();
 
-
-                                Intent myservice = new Intent(MapsActivity.this, BombHandler.class);
-                                myservice.putExtra("BOMB",bomb);
-                                startService(myservice);
                             }else{
-
 
                                 new RetrieveFeedTask().execute();//getactualtime
 
                                 Bomb bomb = new Bomb( currentTime, name, 60, lati, longi);
                                 bomb.setId(0);
-                                db.insert_bomb(bomb);
-
-                                Intent myservice = new Intent(MapsActivity.this, BombHandler.class);
-                                myservice.putExtra("BOMB",bomb);
-                                startService(myservice);
+                                new BombSenderClient(bomb).execute();
                             }
 
-
-                            //didnt let click on put bmb again
 
                         }
 
@@ -478,7 +451,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
 
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, list);
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 200,0 , list);
 
 
         receiver = new BroadcastReceiver() {
@@ -509,33 +482,83 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
+
+
         switch (item.getItemId()) {
+
             case android.R.id.home:
             case R.id.logout:
-                db.delete_user(name);
-                user = null;
+                TextView not = (TextView) findViewById(R.id.notfiy_text);
 
-                LoginActivity.putPref(Constants.PREFERENCE_NAME, "", this);
+                if(not.getText().toString().equals(Constants.YOU_ARE_IN_DANGER)){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(Constants.ALERT_MESSAGE)
+                            .setTitle(Constants.ALERT);
 
-                Intent myintent = new Intent(MapsActivity.this, LoginActivity.class);
-                startActivity(myintent);
+                    builder.setPositiveButton(Constants.EXIT, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User clicked OK button
+                            LoginActivity.putPref(Constants.PREFERENCE_NAME, "", getApplicationContext());
 
-                if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }else{
-                    manager.removeUpdates(list);
+                            TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+                            String imei = telephonyManager.getDeviceId();
+
+                            new LoginSenderClient(new LoginUser(name,"",true,imei)).execute();
+
+                            Intent myintent = new Intent(MapsActivity.this, LoginActivity.class);
+                            startActivity(myintent);
+
+                            if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                    ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            }else{
+                                manager.removeUpdates(list);
+                            }
+
+                            manager= null;
+                            dangerChecker.interrupt();
+                            finish();
+                            onStop();
+                        }
+                    });
+                    builder.setNegativeButton(Constants.CANCEL, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // User cancelled the dialog
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }else {
+
+                    LoginActivity.putPref(Constants.PREFERENCE_NAME, "", this);
+
+                    TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+                    String imei = telephonyManager.getDeviceId();
+
+                    new LoginSenderClient(new LoginUser(name,"",true,imei)).execute();
+
+                    Intent myintent = new Intent(MapsActivity.this, LoginActivity.class);
+                    startActivity(myintent);
+
+                    if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return false;
+                    }else{
+                        manager.removeUpdates(list);
+                    }
+
+                    manager= null;
+                    dangerChecker.interrupt();
+                    finish();
+                    super.onStop();
+                    return true;
+
                 }
 
-                manager= null;
-                dangerChecker.interrupt();
-                dataCleaner.interrupt();
 
 
 
-                finish();
-                super.onStop();
-                return true;
             case R.id.menu_main_setting:
                 return true;
             default:
@@ -557,26 +580,70 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onBackPressed() {
-        Log.d("CDA", "onBackPressed Called");
+        TextView not = (TextView) findViewById(R.id.notfiy_text);
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        }else{
-            manager.removeUpdates(list);
+        if(not.getText().toString().equals(Constants.YOU_ARE_IN_DANGER)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(Constants.ALERT_MESSAGE)
+                    .setTitle(Constants.ALERT);
+
+            builder.setPositiveButton(Constants.EXIT, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User clicked OK button
+                    if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    } else {
+                        manager.removeUpdates(list);
+                    }
+
+                    if (dangerChecker != null) dangerChecker.interrupt();
+
+                    manager = null;
+
+                    new UserSenderClient(new User(name, lati, longi, 0)).execute();
+
+                    user = null;
+
+
+                    Intent setIntent = new Intent(Intent.ACTION_MAIN);
+                    setIntent.addCategory(Intent.CATEGORY_HOME);
+                    setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(setIntent);
+                    finish();
+                }
+            });
+            builder.setNegativeButton(Constants.CANCEL, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+            });
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+
+        }else {
+
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            } else {
+                manager.removeUpdates(list);
+            }
+
+            if (dangerChecker != null) dangerChecker.interrupt();
+
+            manager = null;
+
+            new UserSenderClient(new User(name, lati, longi, 0)).execute();
+
+            user = null;
+
+
+            Intent setIntent = new Intent(Intent.ACTION_MAIN);
+            setIntent.addCategory(Intent.CATEGORY_HOME);
+            setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(setIntent);
+            finish();
         }
-
-        dangerChecker.interrupt();
-        dataCleaner.interrupt();
-
-
-
-        manager= null;
-
-
-        Intent setIntent = new Intent(Intent.ACTION_MAIN);
-        setIntent.addCategory(Intent.CATEGORY_HOME);
-        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(setIntent);
     }
 
 
@@ -602,13 +669,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onStop() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
-
-
         manager= null;
 
 
+        new UserSenderClient(new User(name,lati,longi,0)).execute();
         user = null;
-        db.delete_user(name);
 
         finish();
         super.onStop();
@@ -618,19 +683,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onPause() {
 
         paused = true;
-        db.delete_user(name);
-
-        user = null;
-        onStop();
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
 
-        db.delete_user(name);
 
-        user = null;
         super.onDestroy();
     }
 
@@ -664,7 +723,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float animatedFraction = valueAnimator.getAnimatedFraction();
-                //Log.d("aniamtedf", String.valueOf(animatedFraction) + ".....radius" + String.valueOf(animatedFraction * 50));
                 circle.setRadius(animatedFraction * 80);
             }
         });

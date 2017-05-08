@@ -19,8 +19,6 @@ class RetrieveFeedTask extends AsyncTask<String, Void, Long> {
                 now = client.getNtpTime() + SystemClock.elapsedRealtime() - client.getNtpTimeReference();
             }
             MapsActivity.currentTime = now;
-            BombHandler.currentTime = now;
-            DataCleaner.currentTime = now;
             return now;
 
 

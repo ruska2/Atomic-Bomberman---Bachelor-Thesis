@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,11 +18,12 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static android.widget.Toast.makeText;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -35,14 +37,11 @@ public class LoginActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this,
                 new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                112);
+                112);;
 
 
-        //dataclaer
-
-        if(getPref(Constants.PREFERENCE_NAME,getApplicationContext()) != null && !getPref(Constants.PREFERENCE_NAME,getApplicationContext()).equals(""))
-        {
-            String name = getPref(Constants.PREFERENCE_NAME,this);
+        if (getPref(Constants.PREFERENCE_NAME, getApplicationContext()) != null && !getPref(Constants.PREFERENCE_NAME, getApplicationContext()).equals("")) {
+            String name = getPref(Constants.PREFERENCE_NAME, this);
 
             Intent myintent = new Intent(LoginActivity.this, MapsActivity.class);
             myintent.putExtra(Constants.INTENT_NAME, name);
@@ -52,9 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             finish();
 
 
-        }
-        else
-        {
+        } else {
             // Access the default SharedPreferences
             Button reg = (Button) findViewById(R.id.reg_btn);
             reg.setOnClickListener(new View.OnClickListener() {
@@ -66,87 +63,72 @@ public class LoginActivity extends AppCompatActivity {
             });
 
 
-
             final Button log = (Button) findViewById(R.id.button);
             log.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     EditText name = (EditText) findViewById(R.id.editText);
+                    EditText password = (EditText) findViewById(R.id.logpassword);
 
-                    if (name.getText().length() > 0) {
+                    if (name.getText().length() > 0 && password.getText().length() > 0) {
 
-                        String namestr = name.getText().toString();
+                        final String namestr = name.getText().toString();
+                        final String passwordstr = password.getText().toString();
 
                         final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this);
                         progressDialog.setMessage("Loading...");
                         progressDialog.show();
 
+                        TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+                        String imei = telephonyManager.getDeviceId();
 
-                        Query query = db.mDatabase.child(Constants.REGISTRED_USERS_TABLE).orderByChild(Constants.REGISTRED_USERS_TABLE_NICNAKME).equalTo(namestr);
-                        if(RegistrationActivity.validate_email(namestr)){
-                            query = db.mDatabase.child(Constants.REGISTRED_USERS_TABLE).orderByChild(Constants.REGISTRED_USERS_TABLE_MAIL).equalTo(namestr);
-                        }
-                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        new LoginSenderClient(new LoginUser(namestr,passwordstr,false,imei)).execute();
+
+                        db.mDatabase.child(Constants.MESSAGES).child(namestr).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                if(dataSnapshot.getValue() != null){
-
-                                    EditText name = (EditText) findViewById(R.id.editText);
-                                    EditText password = (EditText) findViewById(R.id.logpassword);
-
-                                    String pw = password.getText().toString();
-                                    String namestr = name.getText().toString();
-
-                                    Map<String, Object> objectMap = (HashMap<String, Object>)
-                                            dataSnapshot.getValue();
-
-                                    Map<String, Object> values = null;
-
-                                    for (Object obj : objectMap.values()) {
-                                        if (obj instanceof Map) {
-                                            values = (Map<String, Object>) obj;
-                                        }
-                                    }
-
-                                    if(values.get(Constants.REGISTRED_USER_TABLE_PASSWORD).equals(pw))
-                                    {
+                                if(dataSnapshot.getValue()!= null){
+                                    String mes = dataSnapshot.getValue().toString();
+                                    final Toast t = Toast.makeText(LoginActivity.this, mes, Toast.LENGTH_SHORT);
+                                    t.show();
+                                    if(mes.equals(Constants.LOGIN_SUCCESFULL)){
                                         Intent myintent = new Intent(LoginActivity.this, MapsActivity.class);
-                                        myintent.putExtra(Constants.INTENT_NAME, values.get(Constants.REGISTRED_USERS_TABLE_NICNAKME).toString());
+                                        myintent.putExtra(Constants.INTENT_NAME, namestr);
                                         putPref(Constants.PREFERENCE_NAME, namestr, getApplicationContext());
                                         startActivity(myintent);
 
                                         finish();
-
-                                    }
-                                    else{
-
-                                        Toast.makeText(getApplicationContext(), Constants.WRONG_PASSWORD, Toast.LENGTH_SHORT).show();
                                     }
 
-                                }else{
-                                    Toast.makeText(getApplicationContext(),Constants.USERNAME_NOT_EXIST, Toast.LENGTH_SHORT).show();
+                                    new Timer().schedule(new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            // Your database code here
+                                           t.cancel();
+                                        }
+                                    }, 2000);
+                                    progressDialog.dismiss();
                                 }
 
-                                progressDialog.dismiss();
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
 
                             }
-
                         });
-
-                    } else {
-                        Toast.makeText(getApplicationContext(), Constants.SET_NICKNAME, Toast.LENGTH_SHORT).show();
+                    }else{
+                        makeText(LoginActivity.this,Constants.WRONG_NAME + " or " + Constants.WRONG_PASSWORD, Toast.LENGTH_SHORT).show();
                     }
-
-
                 }
             });
         }
+
+
+
     }
+
 
 
     public static void putPref(String key, String value, Context context) {
@@ -188,13 +170,11 @@ public class LoginActivity extends AppCompatActivity {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
+                    makeText(this, "Permission denied to read your External storage", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 

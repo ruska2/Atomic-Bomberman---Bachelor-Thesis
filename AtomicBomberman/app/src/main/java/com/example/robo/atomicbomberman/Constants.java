@@ -6,6 +6,8 @@ package com.example.robo.atomicbomberman;
 
 public class Constants {
 
+    public static final String HOST = "194.87.102.198";
+
     //ACTIVE_USER
     public static final String ACTIVE_USERS_TABLE = "ACTIVE_USERS";
     public static final String ACTIVE_USERS_TABLE_NICKNAME = "NICKNAME";
@@ -15,7 +17,7 @@ public class Constants {
 
     //TOASTS
     public static final String WRONG_PASSWORD = "Wrong Password!";
-    public static final String USERNAME_NOT_EXIST = "Username not Exist!";
+
     public static final String SET_NICKNAME = "Set Nickname!";
     public static final String FOUNDED_GPS = "GPS Signal Founded";
     public static final String NOT_VALID_EMAIL = "Not valid E-mail!";
@@ -30,6 +32,7 @@ public class Constants {
     public static final String REGISTRED_USERS_TABLE_NICNAKME = "NICKNAME";
     public static final String REGISTRED_USERS_TABLE_MAIL = "EMAIL";
     public static final String REGISTRED_USERS_TABLE_SCORE = "SCORE";
+    public static final String REGISTRED_USERS_TABLE_BONUS = "BONUS";
 
     public static final String PREFERENCE_NAME = "User";
     public static final String INTENT_NAME = "name";
@@ -50,15 +53,19 @@ public class Constants {
     public static final String ACTIVE_BOMB_TABLE_LATI = "LATITUDE";
     public static final String ACTIVE_BOMB_TABLE_ID = "ID";
 
-    //TIME_IN_MILIS
-    public static final long TEN_SECONDS_IN_MILIS = 10000;
-    public static final long FIVE_SECONDS_IN_MILIS = 5000;
 
     //ALERT_TOOLBAR STRINGS
 
     public static final String YOU_ARE_IN_SAFE = "YOU ARE IN SAFE";
     public static final String YOU_ARE_IN_DANGER = "YOU ARE IN DANGER , MOVE AWAY !!!";
     public static final String SCORE = "SCORE : ";
+    public static final String LOGIN_SUCCESFULL = "Login Succesfull";
+    public static final String MESSAGES = "MESSAGES";
+    public static final String ALERT = "ALERT!!!";
+    public static final String EXIT = "Exit";
+    public static final String CANCEL = "Cancel";
+    public static final String ALERT_MESSAGE = "If you loging out now you may be hited by bomb";
+
 
     private Constants(){
 

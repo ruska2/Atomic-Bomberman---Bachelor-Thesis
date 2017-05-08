@@ -1,5 +1,6 @@
 package com.example.robo.atomicbomberman;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,11 +8,14 @@ import java.util.Map;
  * Created by Robo on 08.01.2017.
  */
 
-public class User {
-    static String nickname;
+public class User implements Serializable {
+    String nickname;
     double lati;
     double longi;
     long datetime;
+    boolean delete = false;
+    static final long serialVersionUID = 2L;
+
 
     public User(String name, double lati, double longi,long datetime){
         this.nickname = name;
@@ -37,6 +41,12 @@ public class User {
         return  longi;
     }
 
+    public boolean getDelete(){return delete;}
+
+    public void setDelete(boolean delete){
+        this.delete = delete;
+    }
+
     public long getDatetime(){return datetime;}
 
     public void setName(String name){
@@ -52,6 +62,7 @@ public class User {
     }
 
     public void setDatetime(long datetime) {this.datetime = datetime;}
+
 
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();

@@ -1,0 +1,18 @@
+<component name="libraryTable">
+  <library name="google-api-client-1.22.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Firebase/google-api-client-1.22.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Firebase/google-http-client-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Firebase/google-http-client-gson-1.22.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Firebase/google-oauth-client-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Firebase/gson-2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Firebase/jackson-all-1.9.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Firebase/java-json.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Firebase/firebase-server-sdk-3.0.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/Firebase/java-json.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -129,12 +129,15 @@ public class RegistrationActivity extends AppCompatActivity {
                             }
 
                             if(insert){
-                                db.insert_registred_user(name,pw,mail);
+                                //CORRECT EMAIL NAME THEY ARE NOT IN DB
+                                RegistredUser ru = new RegistredUser(name,pw,mail);
+                                new RegisterSenderClient(ru).execute();
                                 finish();
                             }
                         }
                         else
                         {
+
 
                             EditText namet = (EditText) findViewById(R.id.reg_nickname);
                             String name = namet.getText().toString();
@@ -145,8 +148,9 @@ public class RegistrationActivity extends AppCompatActivity {
                             EditText email = (EditText) findViewById(R.id.reg_email);
                             String mail = email.getText().toString();
 
-
-                            db.insert_registred_user(name,pw,mail);
+                            RegistredUser ru = new RegistredUser(name,pw,mail);
+                            new RegisterSenderClient(ru).execute();
+                            //NO USERS IN DB
                             finish();
 
                         }

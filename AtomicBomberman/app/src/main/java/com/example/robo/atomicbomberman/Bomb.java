@@ -12,6 +12,7 @@ public class Bomb implements Serializable {
     int remaining_time;
     double lati;
     double longi;
+    static final long serialVersionUID = 1L;
 
     public Bomb(long datetime,String who, int remaining_time, double lati, double longi){
         this.datetime = datetime;
@@ -52,6 +53,8 @@ public class Bomb implements Serializable {
     public  void setWho(String who){
         this.who = who;
     }
+
+    public int getId(){return this.id;}
 
     public  void setRemaining_time(int remaining_time){
         this.remaining_time = remaining_time;
