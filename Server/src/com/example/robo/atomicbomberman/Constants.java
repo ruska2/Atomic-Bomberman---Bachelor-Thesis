@@ -57,7 +57,8 @@ public class Constants {
     //TRACK
 
     public static final String TRACK_TABLE = "USER_TRACKS";
-
+    public static final String QUEST_TABLE = "QUESTS";
+    public static final String BONUSES = "BONUSES";
 
     private Constants(){
 

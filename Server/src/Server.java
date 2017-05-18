@@ -7,19 +7,23 @@ import java.io.ObjectStreamClass;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Scanner;
+import java.util.List;
 
 import com.example.robo.atomicbomberman.Bomb;
 import com.example.robo.atomicbomberman.Constants;
 import com.example.robo.atomicbomberman.User;
 
+import static sun.misc.Version.print;
+
 public class Server implements Runnable{
 
-	static ServerSocket s1;
     static Database db;
     static DataCleaner dc;
 
 	public static void main(String[] args) throws IOException {
+
 		// TODO Auto-generated method stub
         db = new Database();
 		Server x = new Server();
@@ -27,32 +31,28 @@ public class Server implements Runnable{
 		dc = new DataCleaner();
 		dc.start();
 
+		new Thread(new QuestGenerator()).start();
+		new Thread(new BonusGenerator()).start();
+		new Thread(new HitBonusChecker()).start();
 
 	}
 	
-	Server() throws IOException{
-	
-
-	}
+	Server() throws IOException{}
 
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		try {
-			s1 = new ServerSocket(Constants.PORT);
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 			while(true){
 				try{
-					Socket ss = s1.accept();
+
+				    ServerSocket socketServer = new ServerSocket(Constants.PORT);
+					Socket ss = socketServer.accept();
 					
 					ServerThread x = new ServerThread();
 					x.setSocket(ss);
+                    new Thread(x).start();
 
-					Thread xt = new Thread(x);
-					xt.start();
+					socketServer.close();
 
 				}catch(Exception e){
 					e.printStackTrace();

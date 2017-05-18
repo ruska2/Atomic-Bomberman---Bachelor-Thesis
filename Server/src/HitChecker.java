@@ -57,16 +57,7 @@ public class HitChecker implements Runnable {
                                 double distance = PointsDistance.distFrom(lat, longi, bomblat, bomblong);
                                 System.out.println(distance);
 
-                                if(distance < 80.01){
-
-                                    if(!bomb.getWho().equals(nickname)){
-                                        updateUserScore(nickname,- (80 - (int)-distance));
-                                        updateUserScore(bomb.getWho(),80-((int)distance));
-                                    }else{
-                                        updateUserScore(nickname,- (80 - (int)distance));
-
-                                    }
-                                }
+                                new BonusChecker().checkBonus(nickname,bomb.getWho(),distance);
 
                             }
 
@@ -78,33 +69,5 @@ public class HitChecker implements Runnable {
     }
 
 
-    public void updateUserScore(final String nick , final int change){
-
-
-        DatabaseReference childReference = Server.db.databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(nick);
-        childReference.addListenerForSingleValueEvent(new ValueEventListener(){
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // TODO Auto-generated method stub
-                if(dataSnapshot.getValue() != null) {
-                    Map<String, Object> values = (HashMap<String, Object>) dataSnapshot.getValue();
-
-                            int score = (int)(long) values.get(Constants.REGISTRED_USERS_TABLE_SCORE);
-
-                            Task<Void> childReference = Server.db.databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(nick).child(Constants.REGISTRED_USERS_TABLE_SCORE).setValue(score+change);
-
-
-                        }
-
-            }
-        });
-    }
 
 }

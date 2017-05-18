@@ -17,18 +17,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -68,6 +71,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     ArrayList<Marker> bomb_markers = new ArrayList<>();
     ArrayList<Circle> bomb_circles = new ArrayList<>();
     ArrayList<Circle> bomb_circles_animations = new ArrayList<>();
+    ArrayList<Circle> bonuse_circles = new ArrayList<>();
+    ArrayList<Marker> bonuse_markers = new ArrayList<>();
+
     double lati;
     double longi;
     BroadcastReceiver receiver;
@@ -76,6 +82,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static DangerChecker dangerChecker;
     static long currentTime = 0;
     Handler mHandler;
+    String questtext = "";
+    String bonustext = "";
+
+    PowerManager mgr;
+    PowerManager.WakeLock wakeLock;
+
 
 
 
@@ -98,6 +110,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         getSupportActionBar().setTitle(name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mgr = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+        wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+
         final DatabaseReference dbref = Database.getInstance().mDatabase;
 
         new RetrieveFeedTask().execute();
@@ -115,7 +130,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
                 TextView not = (TextView) findViewById(R.id.notfiy_text);
-                not.setText(mes);
+                not.setText(mes + " " + bonustext);
 
                 not.setTextColor(Color.RED);
                 if(mes.equals(Constants.YOU_ARE_IN_SAFE)){
@@ -128,6 +143,102 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         dangerChecker.mHandler = mHandler;
 
+        dbref.child(Constants.REGISTRED_USERS_TABLE).child(name).child(Constants.REGISTRED_USERS_TABLE_BONUS).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null){
+                    boolean hod = (boolean)dataSnapshot.getValue();
+                    if(hod){
+                        bonustext = Constants.BONUS_TEXT;
+                    }
+                    else{
+                        bonustext = "";
+                    }
+
+                    TextView not = (TextView) findViewById(R.id.notfiy_text);
+                    not.setText(not.getText().toString() + " " + bonustext);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        dbref.child(Constants.BONUSES).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for(Circle p : bonuse_circles){
+                    p.remove();
+                }
+
+                for(Marker m : bonuse_markers){
+                    m.remove();
+                }
+                bonuse_circles.clear();
+                bonuse_markers.clear();
+
+                if(dataSnapshot.getValue() != null) {
+                    Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
+
+                    for (Object obj : objectMap.values()) {
+                        if (obj instanceof Map) {
+                            Map<String, Object> values = (Map<String, Object>) obj;
+                            double la = (double) values.get(Constants.ACTIVE_USERS_TABLE_LATI);
+                            double lo = (double) values.get(Constants.ACTIVE_USERS_TABLE_LONGI);
+
+                            Circle circle = mMap.addCircle(new CircleOptions()
+                                    .center(new LatLng(la, lo))
+                                    .radius(2)
+                                    .fillColor(Color.BLUE));
+
+                            bonuse_circles.add(circle);
+
+                            IconGenerator iconFactory = new IconGenerator(getApplicationContext());
+                            Marker me = mMap.addMarker(new MarkerOptions().position(new LatLng(la, lo)));
+                            me.setIcon(BitmapDescriptorFactory.fromBitmap(iconFactory.makeIcon("BONUS")));
+
+                            bonuse_markers.add(me);
+
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        // GET QUEST
+        dbref.child(Constants.QUEST_TABLE).child(name).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ImageView quest = (ImageView) findViewById(R.id.imageView6);
+                if(dataSnapshot.getValue() == null){
+                    quest.setVisibility(View.INVISIBLE);
+                    questtext = "";
+                }else{
+                    quest.setVisibility(View.VISIBLE);
+
+                    String who = dataSnapshot.getValue().toString();
+                    questtext = "Explode player " + who + " and you will get extra 100 bonus score";
+
+                    //set pupup dialog vindow text to image view
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         //get_actual_score
 
@@ -140,7 +251,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (Object obj : objectMap.values()) {
                         if (obj instanceof Map) {
                             Map<String, Object> values = (Map<String, Object>) obj;
-                            String score = String.valueOf(values.get(Constants.REGISTRED_USERS_TABLE_SCORE));
 
                             TextView scoretv = (TextView) findViewById(R.id.score_text);
                             int newn = (int) (long)  values.get(Constants.REGISTRED_USERS_TABLE_SCORE);
@@ -346,6 +456,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         };
 
 
+        //TODO IMAGE VIEW POPUP ONLCILK
+
+        ImageView iw = (ImageView) findViewById(R.id.imageView6);
+        iw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MapsActivity.this);
+                builder.setMessage(questtext)
+                        .setTitle(Constants.QUEST_TEXT);
+
+                builder.setPositiveButton(Constants.OK, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // User clicked OK button
+                    }
+                });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+
+
         final Button putbomb = (Button) findViewById(R.id.button2);
         putbomb.setOnClickListener(new View.OnClickListener() {
 
@@ -549,7 +681,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
 
                     manager= null;
-                    dangerChecker.interrupt();
+                    try{
+                        dangerChecker.interrupt();
+                    }catch (Exception e){};
+
                     finish();
                     super.onStop();
                     return true;
@@ -683,13 +818,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onPause() {
 
         paused = true;
+
+        Log.d("ONPAUSECALL","PAUSE");
+        wakeLock.acquire();
+
         super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-
-
         super.onDestroy();
     }
 
@@ -698,6 +835,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver((receiver),
                 new IntentFilter(Constants.PUT_BOMB_INTENT));
+        Log.d("ONRESUME","ONRESUMECALLED");
+        if(wakeLock.isHeld()){wakeLock.release();Log.d("ONRESUMECALLL","LOCKRELASED");}
     }
 
     private void startCountAnimation(final TextView v, int start, int end) {

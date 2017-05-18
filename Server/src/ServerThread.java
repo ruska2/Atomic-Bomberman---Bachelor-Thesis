@@ -58,7 +58,7 @@ public class ServerThread implements Runnable{
                 }else {
                     //ADD-UPDATE
                     new CheckCorrectLatLong(user).checkMethod();
-                    new addToTrackTree(user).addToTrack();
+                    new AddToTrackTree(user).addToTrack();
                 }
                 break;
 
@@ -82,6 +82,13 @@ public class ServerThread implements Runnable{
             default: break;
 
         }
+
+        /*ss.close();
+        try {
+            this.finalize();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }*/
     }
 
 

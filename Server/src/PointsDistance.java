@@ -1,8 +1,14 @@
+import java.util.List;
+
 /**
  * Created by Robo on 04.05.2017.
  */
 
 public class PointsDistance {
+
+    public static void main(String[] args){
+        System.out.println(distFrom(50.1729501953125,17.08309647705078,50.1739501953125,17.08307647705078));
+    }
 
 
     //HAVERSINE
@@ -17,5 +23,45 @@ public class PointsDistance {
         double dist = (double) (earthRadius * c);
 
         return dist;
+    }
+
+    public static double[] GetCentralGeoCoordinate(List<Node> geoCoordinates) {
+        double[] p = new double[2];
+        if (geoCoordinates.size() == 1)
+        {
+
+            p[0] = geoCoordinates.get(0).coords[0];
+            p[1] = geoCoordinates.get(0).coords[1];
+            return p;
+        }
+
+        double x = 0;
+        double y = 0;
+        double z = 0;
+
+        for (Node geoCoordinate:geoCoordinates)
+        {
+            double latitude = geoCoordinate.coords[0] * Math.PI / 180;
+            double longitude = geoCoordinate.coords[1] * Math.PI / 180;
+
+            x += Math.cos(latitude) * Math.cos(longitude);
+            y += Math.cos(latitude) * Math.sin(longitude);
+            z += Math.sin(latitude);
+        }
+
+        int total = geoCoordinates.size();
+
+        x = x / total;
+        y = y / total;
+        z = z / total;
+
+        double centralLongitude = Math.atan2(y, x);
+        double centralSquareRoot = Math.sqrt(x * x + y * y);
+        double centralLatitude = Math.atan2(z, centralSquareRoot);
+
+        p[0] = centralLatitude * 180 / Math.PI;
+        p[1] = centralLongitude * 180 / Math.PI;
+
+        return p;
     }
 }

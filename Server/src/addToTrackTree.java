@@ -8,10 +8,10 @@ import java.util.*;
 /**
  * Created by Robo on 08.05.2017.
  */
-public class addToTrackTree {
+public class AddToTrackTree {
     User user;
 
-    addToTrackTree(User u ){
+    AddToTrackTree(User u ){
         user = u;
     }
 
