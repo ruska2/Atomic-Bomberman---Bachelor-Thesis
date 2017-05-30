@@ -53,7 +53,6 @@ public class LogoutChecker {
 
                     }
 
-
                     for (Object obj : objectMap.values()) {
                         if (obj instanceof Map) {
                             Map<String, Object> values = (Map<String, Object>) obj;
@@ -62,7 +61,6 @@ public class LogoutChecker {
                             double longi = (double) values.get(Constants.ACTIVE_BOMB_TABLE_LONGI);
 
                             double distance = PointsDistance.distFrom(lat, longi , user.getLati(),user.getLongi());
-                            System.out.println(distance);
 
                             if(distance < 80.01){
                             }else{

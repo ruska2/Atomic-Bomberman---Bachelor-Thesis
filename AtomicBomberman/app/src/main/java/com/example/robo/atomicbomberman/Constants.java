@@ -6,9 +6,7 @@ package com.example.robo.atomicbomberman;
 
 public class Constants {
 
-    //public static final String HOST = "194.87.102.198";
-    public static final String HOST = "192.168.0.103";
-
+    public static final String HOST = "194.87.102.198";
 
     //ACTIVE_USER
     public static final String ACTIVE_USERS_TABLE = "ACTIVE_USERS";
@@ -58,7 +56,7 @@ public class Constants {
 
     //ALERT_TOOLBAR STRINGS
 
-    public static final String YOU_ARE_IN_SAFE = "YOU ARE IN SAFE";
+    public static final String YOU_ARE_IN_SAFE = "YOU ARE SAFE";
     public static final String YOU_ARE_IN_DANGER = "YOU ARE IN DANGER , MOVE AWAY !!!";
     public static final String SCORE = "SCORE : ";
     public static final String LOGIN_SUCCESFULL = "Login Succesfull";
@@ -74,6 +72,9 @@ public class Constants {
     public static final String OK = "OK";
 
     public static final String BONUS_TEXT = " !BONUS ACTIVE! ";
+    public static final String TOPTEN = "TOP10";
+    public static final int THIRTYSEC = 30;
+    public static final double EIGHTYMETERS = 80.01;
 
 
     private Constants(){

@@ -2,6 +2,7 @@
  * Created by Robo on 03.05.2017.
  */
 import com.example.robo.atomicbomberman.Bomb;
+import com.example.robo.atomicbomberman.Constants;
 
 public class BombTicker implements Runnable {
 
@@ -13,6 +14,7 @@ public class BombTicker implements Runnable {
     @Override
     public void run() {
         while(true){
+            Runtime r = Runtime.getRuntime();
             Server.db.bombAddUpdate(bomb);
             try {
                 Thread.sleep(1000);
@@ -30,13 +32,11 @@ public class BombTicker implements Runnable {
 
             }
 
-
-
         }
     }
 
     public static boolean checkCorrectAdd(Bomb b){
-        if(b.getRemaining_time() == 60) return true;
+        if(b.getRemaining_time() == Constants.ONE_MINUTE/1000) return true;
         return false;
     }
 }

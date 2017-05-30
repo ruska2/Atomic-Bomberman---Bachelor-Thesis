@@ -21,10 +21,9 @@ public class CheckUserLogin {
         Server.db.databaseReference.child(Constants.LOGGED_USERS).child(user.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.getValue() != null) {
                     Server.db.userAddUpdate(user);
-                }else{
-
                 }
             }
 

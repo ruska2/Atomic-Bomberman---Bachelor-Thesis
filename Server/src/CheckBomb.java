@@ -48,8 +48,8 @@ public class CheckBomb {
                             long time = (long) values.get(Constants.ACTIVE_BOMB_TABLE_DATETIME);
 
                             boolean check = true;
+
                             if (who.equals(b.getWho())) {
-                                System.out.print(b.getDatetime()-time);
                                 if (b.getDatetime() - time < 30000) {
                                     check = false;
                                 }

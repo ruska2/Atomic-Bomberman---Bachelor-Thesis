@@ -60,6 +60,9 @@ public class Constants {
     public static final String QUEST_TABLE = "QUESTS";
     public static final String BONUSES = "BONUSES";
 
+    public static final int TWO_DAYS = 172800000;
+    public static final int ONE_MINUTE = 60000;
+
     private Constants(){
 
     }

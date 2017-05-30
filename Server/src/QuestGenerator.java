@@ -22,7 +22,7 @@ public class QuestGenerator implements Runnable {
                 e.printStackTrace();
             }
 
-            deleteQuests();
+            Server.db.deleteQuests();
 
             try {
                 Thread.sleep(70000);
@@ -64,7 +64,7 @@ public class QuestGenerator implements Runnable {
                                         double long2 = (double) values2.get(Constants.ACTIVE_BOMB_TABLE_LONGI);
 
                                         double distance = PointsDistance.distFrom(lat1,long1,lat2,long2);
-                                        System.out.println(distance + ","+name +","+name2);
+
                                         if(distance > 50 && distance < 200){
                                             names.add(name2);
                                         }
@@ -74,14 +74,8 @@ public class QuestGenerator implements Runnable {
 
                             if(names.size() > 0){
                                 int num = rnd.nextInt(names.size());
-                                Server.db.databaseReference.child(Constants.QUEST_TABLE).child(name).setValue(names.get(num));
-                            }else{
-
+                                Server.db.addQuest(name,names.get(num));
                             }
-
-
-
-
                         }
                     }
                 }
@@ -93,9 +87,8 @@ public class QuestGenerator implements Runnable {
 
             }
         });
+
+
     }
 
-    public void deleteQuests(){
-        Server.db.databaseReference.child(Constants.QUEST_TABLE).removeValue();
-    }
 }

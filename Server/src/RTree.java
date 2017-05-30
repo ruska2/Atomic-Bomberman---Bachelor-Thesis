@@ -25,6 +25,7 @@ public class RTree<T>
 
     public List<Node> list = new ArrayList<>();
     public List<List<Node>> lists = new ArrayList<>();
+    public int robi = 0;
 
     private final double[] pointDims;
 
@@ -634,7 +635,7 @@ public class RTree<T>
         }
     }
 
-    private Node chooseLeaf(Node n, RTree<T>.Entry e)
+    private Node chooseLeaf(Node n, Entry e)
     {
         if (n.leaf)
         {
@@ -773,6 +774,7 @@ public class RTree<T>
         pw.flush();
     }
 
+
     private void visualize(Node n, double x0, double y0, int w, int h)
     {
         boolean q = false;
@@ -780,9 +782,7 @@ public class RTree<T>
         if(!n.leaf){
 
             double[] a = n.dimensions;
-
-            if(a[0] != 0.0){
-
+            if(a[0] != 0.0 && a[1] != 0.0){
 
                 double dy1 = y0 + a[1];
                 double dx1 = x0 + a[0];
@@ -790,15 +790,13 @@ public class RTree<T>
                 double dis1 =  PointsDistance.distFrom(x0,y0,dx1,dy1);
                 double dis2 = dis1/Math.sqrt(2);
 
+
+
                 boolean area = dis2 < 100;
 
-                //System.out.println(dis2);
-
                 if(area){
-
                     q = true;
                     counter(n);
-
                     if(list.size() > 2) {
                         lists.add(list);
                         list = new ArrayList<>();
@@ -809,8 +807,8 @@ public class RTree<T>
         if(!q) {
             int numChildren = (n.children == null) ? 0 : n.children.size();
             for (int i = 0; i < numChildren; i++) {
-                visualize(n.children.get(i), (double) n.children.get(i).coords[0],
-                        (double) n.children.get(i).coords[1], (int) (w / (double) numChildren), h - elemHeight);
+                visualize(n.children.get(i), n.children.get(i).coords[0],
+                        n.children.get(i).coords[1], (int) (w / (double) numChildren), h - elemHeight);
             }
         }
     }

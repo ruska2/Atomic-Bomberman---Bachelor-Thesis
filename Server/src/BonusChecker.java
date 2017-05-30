@@ -66,7 +66,7 @@ public class BonusChecker {
 
                     int score = (int)(long) values.get(Constants.REGISTRED_USERS_TABLE_SCORE);
 
-                    Server.db.databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(nick).child(Constants.REGISTRED_USERS_TABLE_SCORE).setValue(score+change);
+                    Server.db.updateScore(nick,score,change);
 
 
                 }

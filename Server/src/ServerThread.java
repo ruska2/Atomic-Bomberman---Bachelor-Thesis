@@ -34,61 +34,83 @@ public class ServerThread implements Runnable{
 	}
 
 	public void makeOperation() throws IOException,ClassNotFoundException {
-        InputStream input = ss.getInputStream();
 
+        BufferedInputStream input = new BufferedInputStream(ss.getInputStream());
         ObjectInputStream objstream = new ObjectInputStream(input);
-        Object obj = objstream.readObject();
+        Object obj = null;
+        long UID;
+        boolean x = true;
+        while(x) {
 
-        long UID = ObjectStreamClass.lookup(obj.getClass()).getSerialVersionUID();
+            try {
+                obj = objstream.readObject();
+            }catch (Exception e){
+                obj = null;
+            };
 
-        switch ((int) UID) {
-            case 1 :
-                Bomb bomb = (Bomb) obj;
-                if(BombTicker.checkCorrectAdd(bomb)) {
+            if(obj != null){
+                UID = ObjectStreamClass.lookup(obj.getClass()).getSerialVersionUID();
 
-                    new CheckBomb(bomb).checkCorrectness();
+                switch ((int) UID) {
+                    case 1 :
+                        Bomb bomb = (Bomb) obj;
+                        if(BombTicker.checkCorrectAdd(bomb)) {
+
+                            new CheckBomb(bomb).checkCorrectness();
+                        }
+                        break;
+
+                    case 2 :
+                        final User user = (User) obj;
+                        if(user.getDatetime() == 0){
+                            //LOOGOU
+                            new LogoutChecker(user).checkMethod();
+                            x = false;
+                        }else {
+                            //ADD-UPDATE
+                            new CheckCorrectLatLong(user).start();
+                            new AddToTrackTree(user).addToTrack();
+                        }
+                        break;
+
+                    case 3:
+                        final LoginUser loginUser = (LoginUser) obj;
+                        System.out.println(loginUser.getName() + ","+ loginUser.getPassword());
+
+                        if(loginUser.getDelete()){
+                            new LoginControl(loginUser.getName(),loginUser.getPassword(),loginUser.getImei()).deleteUser();
+                        }
+                        else{
+                            new LoginControl(loginUser.getName(),loginUser.getPassword(),loginUser.getImei()).checkCorrectUser();
+                        }
+                        x = false;
+                        break;
+
+
+                    case 4:
+                        RegistredUser ru = (RegistredUser) obj;
+                        new CheckRegistration(ru).checkCorretness();
+                        x = false;
+                        break;
+
+                    default: break;
+
                 }
-                break;
 
-            case 2 :
-                final User user = (User) obj;
-                if(user.getDatetime() == 0){
-                    //LOOGOU
-                    new LogoutChecker(user).checkMethod();
-                }else {
-                    //ADD-UPDATE
-                    new CheckCorrectLatLong(user).checkMethod();
-                    new AddToTrackTree(user).addToTrack();
-                }
-                break;
 
-            case 3:
-                final LoginUser loginUser = (LoginUser) obj;
-                System.out.println(loginUser.getName() + ","+ loginUser.getPassword());
-
-                if(loginUser.getDelete()){
-                    new LoginControl(loginUser.getName(),loginUser.getPassword(),loginUser.getImei()).deleteUser();
-                }
-                else{
-                    new LoginControl(loginUser.getName(),loginUser.getPassword(),loginUser.getImei()).checkCorrectUser();
-                }
-                break;
-
-            case 4:
-                RegistredUser ru = (RegistredUser) obj;
-                new CheckRegistration(ru).checkCorretness();
-                break;
-
-            default: break;
+            }
 
         }
 
-        /*ss.close();
+        input.close();
+        objstream.close();
+        ss.close();
+
         try {
             this.finalize();
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-        }*/
+        }
     }
 
 

@@ -12,8 +12,8 @@ public class BonusCounter {
     }
 
     public void make() throws InterruptedException {
-        Thread.sleep(60000);
+        Thread.sleep(Constants.ONE_MINUTE);
 
-        Server.db.databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(name).child(Constants.REGISTRED_USERS_TABLE_BONUS).setValue(false);
+        Server.db.removeBonus(name);
     }
 }

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -23,13 +24,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 import static android.widget.Toast.makeText;
 
 public class LoginActivity extends AppCompatActivity {
 
 
     Database db = Database.getInstance();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +83,6 @@ public class LoginActivity extends AppCompatActivity {
                         TelephonyManager telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
                         String imei = telephonyManager.getDeviceId();
 
-
                         new LoginSenderClient(new LoginUser(namestr,passwordstr,false,imei)).execute();
 
                         db.mDatabase.child(Constants.MESSAGES).child(namestr).addValueEventListener(new ValueEventListener() {
@@ -124,12 +124,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
         }
-
-
-
     }
-
-
 
     public static void putPref(String key, String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -155,8 +150,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
 

@@ -6,10 +6,6 @@ import java.util.List;
 
 public class PointsDistance {
 
-    public static void main(String[] args){
-        System.out.println(distFrom(50.1729501953125,17.08309647705078,50.1739501953125,17.08307647705078));
-    }
-
 
     //HAVERSINE
     public static double distFrom(double lat1, double lng1, double lat2, double lng2) {

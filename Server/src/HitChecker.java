@@ -55,7 +55,7 @@ public class HitChecker implements Runnable {
 
 
                                 double distance = PointsDistance.distFrom(lat, longi, bomblat, bomblong);
-                                System.out.println(distance);
+                                //System.out.println(distance);
 
                                 new BonusChecker().checkBonus(nickname,bomb.getWho(),distance);
 

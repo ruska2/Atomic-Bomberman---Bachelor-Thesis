@@ -7,7 +7,7 @@ public class BonusGenerator implements Runnable {
     @Override
     public void run() {
         while(true){
-            Server.db.databaseReference.child(Constants.BONUSES).removeValue();
+            Server.db.removeBonuses();
 
             try {
                 Thread.sleep(5000);

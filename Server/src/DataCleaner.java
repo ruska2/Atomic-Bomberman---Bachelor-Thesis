@@ -13,6 +13,7 @@ import java.util.Map;
 public class DataCleaner extends Thread {
 
     static long currentTime = 0;
+    int time = 0;
 
     @Override
     public void start() {
@@ -21,11 +22,13 @@ public class DataCleaner extends Thread {
 
     }
 
+
+
     @Override
     public void run() {
         // do something in a new thread if 'called' by super.start()
 
-        while(true){
+        while (true) {
 
 
             final DatabaseReference dbref = Server.db.databaseReference;
@@ -46,7 +49,7 @@ public class DataCleaner extends Thread {
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.getValue() != null) {
+                    if (dataSnapshot.getValue() != null) {
                         Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
 
                         for (Object obj : objectMap.values()) {
@@ -57,7 +60,7 @@ public class DataCleaner extends Thread {
                                 String username = values.get(Constants.ACTIVE_USERS_TABLE_NICKNAME).toString();
                                 long oldtime = (long) values.get(Constants.ACTIVE_USERS_TABLE_DATETIME);
 
-                                if(oldtime != 0 && currentTime - oldtime > 59999) {
+                                if (oldtime != 0 && currentTime - oldtime > Constants.ONE_MINUTE) {
                                     Server.db.deleteUser(username);
                                 }
 
@@ -82,15 +85,15 @@ public class DataCleaner extends Thread {
 
                     if (dataSnapshot.getValue() != null) {
                         Map<String, Object> objectMap;
-                        if(dataSnapshot.getValue() instanceof Map){
+                        if (dataSnapshot.getValue() instanceof Map) {
                             objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
-                        }else{
+                        } else {
                             ArrayList<Object> x = (ArrayList<Object>) dataSnapshot.getValue();
                             objectMap = new HashMap<String, Object>();
-                            for (Object k : x){
-                                if(k != null){
-                                    HashMap<String,Object> o = (HashMap<String, Object>) k;
-                                    objectMap.put(o.get(Constants.ACTIVE_BOMB_TABLE_ID).toString(),o);
+                            for (Object k : x) {
+                                if (k != null) {
+                                    HashMap<String, Object> o = (HashMap<String, Object>) k;
+                                    objectMap.put(o.get(Constants.ACTIVE_BOMB_TABLE_ID).toString(), o);
                                 }
                             }
 
@@ -102,12 +105,11 @@ public class DataCleaner extends Thread {
 
                                 long olddatetime = (long) values.get(Constants.ACTIVE_BOMB_TABLE_DATETIME);
 
-                                if(currentTime-olddatetime > 65000){
+                                if (currentTime - olddatetime > 65000) {
                                     long id = (long) values.get(Constants.ACTIVE_BOMB_TABLE_ID);
                                     Server.db.deleteBomb(id + "");
 
                                 }
-
 
 
                             }
@@ -125,18 +127,44 @@ public class DataCleaner extends Thread {
 
             Server.db.updateActualTime();
 
+            if (time == 0) {
+                Server.db.databaseReference.child(Constants.TRACK_TABLE).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() != null) {
+                            Map<String, Object> objectMap = (HashMap<String, Object>) dataSnapshot.getValue();
 
 
+                            for (String key : objectMap.keySet()) {
+                                    long x = currentTime - (long) ((Map) objectMap.get(key)).get(Constants.ACTIVE_USERS_TABLE_DATETIME);
+                                    if ( x > Constants.TWO_DAYS) {
+                                        Server.db.removeTrack(key);
+                                    }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            if (time >= Constants.TWO_DAYS) {
+                time = 0;
+            }
+
+            System.gc();
 
             try {
                 sleep(500);
+                time += 500;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
+
     }
-
-
-
-
 }

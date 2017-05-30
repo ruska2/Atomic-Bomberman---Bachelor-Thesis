@@ -34,8 +34,8 @@ public class GetAllBonuses {
                             System.out.println(meters);
                             if(meters < 10.01){
 
-                                Server.db.databaseReference.child(Constants.BONUSES).child(key).removeValue();
-                                Server.db.databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(name).child(Constants.REGISTRED_USERS_TABLE_BONUS).setValue(true);
+                                Server.db.removeSingleBonus(key);
+                                Server.db.addBonus(name);
                                 try{
                                     new BonusCounter(name).make();
                                 }catch (Exception e){}

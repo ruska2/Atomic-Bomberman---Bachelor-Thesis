@@ -1,0 +1,31 @@
+<component name="libraryTable">
+  <library name="FIREBASE">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/FIREBASE/commons-codec-1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/commons-logging-1.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/firebase-admin-4.1.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/google-api-client-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/google-api-client-gson-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/google-http-client-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/google-http-client-gson-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/google-http-client-jackson2-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/google-oauth-client-1.21.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/google-play-services.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/gson-2.7.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/guava-jdk5-17.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/httpclient-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/httpcore-4.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/json-20160212.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/jackson-core-2.1.3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/FIREBASE/jsr305-1.3.9.jar!/" />
+      <root url="file://$PROJECT_DIR$/FIREBASE" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/FIREBASE/jsr305-1.3.9.jar!/" />
+      <root url="file://$PROJECT_DIR$/FIREBASE" />
+    </SOURCES>
+    <jarDirectory url="file://$PROJECT_DIR$/FIREBASE" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/FIREBASE" recursive="false" type="SOURCES" />
+  </library>
+</component>

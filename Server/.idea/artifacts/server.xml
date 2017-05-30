@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="server">
+    <output-path>$PROJECT_DIR$/out/artifacts/server</output-path>
+    <root id="archive" name="server.jar">
+      <element id="module-output" name="Server3" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/commons-codec-1.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/commons-logging-1.1.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/httpclient-4.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/httpcore-4.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/jackson-core-2.1.3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/jsr305-1.3.9.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/gson-2.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/guava-20.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/json-20160810.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/firebase-admin-5.0.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/google-api-client-1.22.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/google-http-client-1.22.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/google-oauth-client-1.22.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/google-api-client-gson-1.22.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/google-http-client-gson-1.22.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/FIREBASE/google-http-client-jackson2-1.22.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

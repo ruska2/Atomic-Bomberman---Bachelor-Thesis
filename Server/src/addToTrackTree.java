@@ -33,7 +33,7 @@ public class AddToTrackTree {
 
                             if(name.equals(user.getName())){
                                 alluserswithsamename++;
-                                if(user.getDatetime() - time > 60000){
+                                if(user.getDatetime() - time > Constants.ONE_MINUTE){
                                     usersolderthanoneminue++;
                                 }
                             }

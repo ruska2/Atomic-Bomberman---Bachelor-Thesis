@@ -56,9 +56,6 @@ public class CheckRegistration {
 
             }
         });
-        //pozrieme ci je in ked nie pozrieme correctnost hodnot ked je korektny pridame do registred a pasword do 'REGISTRED_USERS_PASSWORDS'
-        //ked nie je in pozrieme korekcie a pridame  pass do RRISTRED USERS PASSWORD
-        //POTOM PRENASTAVIT PRI LOGINU KONTROL PASSWORDU NA TABULKU REGISTRED USESRS PASSWORDS
     }
 
 

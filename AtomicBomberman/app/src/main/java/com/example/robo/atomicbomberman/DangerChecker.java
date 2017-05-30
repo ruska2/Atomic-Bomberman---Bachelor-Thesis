@@ -76,7 +76,7 @@ public class DangerChecker extends Thread {
 
                             float distanceInMeters = results[0];
 
-                            if(distanceInMeters < 80.01){
+                            if(distanceInMeters < Constants.EIGHTYMETERS){
                                 Message message = mHandler.obtainMessage();
 
                                 message.obj = Constants.YOU_ARE_IN_DANGER;

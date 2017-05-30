@@ -10,9 +10,9 @@ import java.util.Map;
 /**
  * Created by Robo on 05.05.2017.
  */
-public class CheckCorrectLatLong {
+public class CheckCorrectLatLong extends Thread{
     User user;
-
+    public boolean check = false;
     CheckCorrectLatLong(User user){
         this.user = user;
     }
@@ -21,6 +21,7 @@ public class CheckCorrectLatLong {
         Server.db.databaseReference.child(Constants.ACTIVE_USERS_TABLE).child(user.getName()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.getValue() != null) {
 
                     Map<String, Object> values = (HashMap<String, Object>) dataSnapshot.getValue();
@@ -34,10 +35,11 @@ public class CheckCorrectLatLong {
                     } else {
                         System.out.println(Constants.SERVER_MESSAGE_JUMP );
                     }
-
                 }else{
                     new CheckUserLogin(user).checkAddMethod();
                 }
+
+                check = true;
             }
 
             @Override
@@ -46,5 +48,10 @@ public class CheckCorrectLatLong {
             }
 
         });
+    }
+
+    @Override
+    public void run(){
+        checkMethod();
     }
 }

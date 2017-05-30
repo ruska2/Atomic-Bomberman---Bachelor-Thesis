@@ -9,7 +9,7 @@ import android.widget.Button;
 public class ButtonDecrement implements Runnable {
 
     Button putbomb;
-    int counter = 30;
+    int counter = Constants.THIRTYSEC;
     ButtonDecrement(Button b){
         putbomb = b;
     }

@@ -1,44 +1,57 @@
 import com.example.robo.atomicbomberman.*;
-import com.google.firebase.FirebaseApp;
+import com.google.firebase.*;
+import com.google.firebase.auth.FirebaseCredentials;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.FirebaseOptions;
-import com.google.firebase.database.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
+
 
 
 public class Database {
-	
 	public static FirebaseDatabase firebaseDatabase;
 	public static DatabaseReference databaseReference;
 	ArrayList<User> active_users;
 	
 	Database(){
-		initFirebase();
-		active_users = new ArrayList<User>();
-		
-		
-	}
-	
-	private void initFirebase() {
         try {
+            initFirebase();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+	
+	private void initFirebase() throws IOException {
+        try {
+
+            File file = new File("src/atomicbomberman-8e29a-firebase-adminsdk-3ud96-8ef0e44a62.json");
             FirebaseOptions firebaseOptions = new FirebaseOptions.Builder()
+                    .setCredential(FirebaseCredentials.fromCertificate(new FileInputStream(file)))
                     .setDatabaseUrl("https://atomicbomberman-8e29a.firebaseio.com")
-                    .setServiceAccount(new FileInputStream(new File("src/AtomicBomberman-6ed4c7c8e433.json")))
                     .build();
 
-            FirebaseApp.initializeApp(firebaseOptions);
-            firebaseDatabase = FirebaseDatabase.getInstance();
+            FirebaseApp defaultApp = FirebaseApp.initializeApp(firebaseOptions);
+
+            firebaseDatabase = FirebaseDatabase.getInstance(defaultApp);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         }
-        
-        databaseReference = firebaseDatabase.getReference("/");
+
+        databaseReference = firebaseDatabase.getReference();
+    }
+
+    public static DatabaseReference getDatabaseReference(){
+	    return databaseReference;
     }
 	
 	public void bombAddUpdate(Bomb b) {
@@ -46,15 +59,7 @@ public class Database {
 
             DatabaseReference childReference = databaseReference.child(Constants.ACTIVE_BOMB_TABLE);
 
-            final CountDownLatch countDownLatch = new CountDownLatch(1);
-
-            childReference.child(b.getId()+"").setValue(b.toMap(), new DatabaseReference.CompletionListener() {
-
-                @Override
-                public void onComplete(DatabaseError de, DatabaseReference dr) {
-                    countDownLatch.countDown();
-                }
-            });
+            childReference.child(b.getId()+"").setValue(b.toMap());
           
         }
     }
@@ -63,12 +68,7 @@ public class Database {
 	public void userAddUpdate(final User user){
 		DatabaseReference childReference = databaseReference.child(Constants.ACTIVE_USERS_TABLE);
 
-			childReference.child(user.getName()).setValue(user.toMap(), new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(DatabaseError de, DatabaseReference dr) {
-                }
-            });
-			
+			childReference.child(user.getName()).setValue(user.toMap());
 
 	}
 
@@ -148,4 +148,38 @@ public class Database {
         databaseReference.child(Constants.TRACK_TABLE).push().setValue(user.toMap());
     }
 
+    public void addBonus(Map m){
+        databaseReference.child(Constants.BONUSES).push().setValue(m);
+    }
+
+    public void updateScore(String nick,int score,int change){
+        databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(nick).child(Constants.REGISTRED_USERS_TABLE_SCORE).setValue(score+change);
+    }
+
+    public void removeBonus(String name){
+        databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(name).child(Constants.REGISTRED_USERS_TABLE_BONUS).setValue(false);
+    }
+
+    public void removeBonuses(){
+        databaseReference.child(Constants.BONUSES).removeValue();
+    }
+
+    public void removeTrack(String key){
+        databaseReference.child(Constants.TRACK_TABLE).child(key).removeValue();
+    }
+
+    public void removeSingleBonus(String key){
+        databaseReference.child(Constants.BONUSES).child(key).removeValue();
+    }
+
+    public void addBonus(String name){
+        databaseReference.child(Constants.REGISTRED_USERS_TABLE).child(name).child(Constants.REGISTRED_USERS_TABLE_BONUS).setValue(true);
+    }
+    public void addQuest(String name, String target){
+        databaseReference.child(Constants.QUEST_TABLE).child(name).setValue(target);
+    }
+
+    public void deleteQuests(){
+        databaseReference.child(Constants.QUEST_TABLE).removeValue();
+    }
 }
